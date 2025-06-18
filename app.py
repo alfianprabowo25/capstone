@@ -7,13 +7,12 @@ import joblib
 model = joblib.load("best_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# === Daftar fitur yang digunakan saat training ===
+# === Fitur yang digunakan ===
 features = ["Gender", "Age", "Height", "Weight", "FCVC", "FAF"]
 
-# === Konfigurasi halaman ===
+# === UI Aplikasi ===
 st.set_page_config(page_title="Prediksi Obesitas", layout="centered")
 st.title("🔍 Prediksi Kategori Obesitas")
-st.markdown("Masukkan data diri Anda untuk mengetahui kategori obesitas berdasarkan model machine learning.")
 
 # === Input dari user ===
 gender = st.radio("Jenis Kelamin", ["Male", "Female"])
@@ -23,22 +22,12 @@ weight = st.number_input("Berat Badan (kg)", min_value=20.0, max_value=200.0, va
 fcvc = st.slider("Frekuensi Konsumsi Sayur (1: Jarang, 3: Sering)", 1.0, 3.0, 2.0)
 faf = st.slider("Aktivitas Fisik Mingguan (jam/minggu)", 0.0, 3.0, 1.0)
 
-# === Preprocessing input ===
+# === Preprocessing ===
 gender = 1 if gender == "Male" else 0
 input_data = pd.DataFrame([[gender, age, height, weight, fcvc, faf]], columns=features)
 
-# === Scaling input ===
-try:
-    input_scaled = scaler.transform(input_data)
-except ValueError:
-    input_scaled = scaler.transform(input_data.values)
+# Gunakan .values untuk menghindari error dari pengecekan nama kolom
+input_scaled = scaler.transform(input_data.values)
 
 # === Prediksi ===
-if st.button("🔮 Prediksi"):
-    prediction = model.predict(input_scaled)
-    st.success(f"Hasil Prediksi: **{prediction[0]}**")
-    st.markdown("⚠️ Hasil prediksi ini tidak menggantikan diagnosis profesional medis.")
-
-# === Footer ===
-st.markdown("---")
-st.caption("📘 Aplikasi ini dibuat untuk tugas akhir klasifikasi obesitas menggunakan machine learning.")
+if st.button("🔮 Pre
